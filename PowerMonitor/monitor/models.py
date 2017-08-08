@@ -5,4 +5,10 @@ from django.db import models
 
 # Create your models here.
 class Meter(models.Model):
-    
+    id = models.IntegerField(default=0)
+    type = models.IntegerField(default=0)
+
+class Reading(models.Model):    
+    consumption = models.IntegerField(default=0)
+    time = models.DateTimeField()
+    meter = models.ForeignKey(Meter, on_delete=models.CASCADE)
