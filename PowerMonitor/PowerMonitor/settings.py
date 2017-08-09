@@ -31,7 +31,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.messages',
+    'monitor.apps.MonitorConfig',
+    'django.contrib.messages',    
+    'django.contrib.contenttypes'
 ]
 
 MIDDLEWARE = [
