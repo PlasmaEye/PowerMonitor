@@ -32,8 +32,9 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'monitor.apps.MonitorConfig',
+    'django_celery_results',
     'django.contrib.messages',    
-    'django.contrib.contenttypes'
+    'django.contrib.contenttypes',    
 ]
 
 MIDDLEWARE = [
@@ -77,6 +78,7 @@ DATABASES = {
     }
 }
 
+CELERY_RESULT_BACKEND = 'django-db'
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
