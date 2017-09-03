@@ -8,22 +8,10 @@ Build and run [rtltcp](github.com/bemasher/rtltcp) on a device that has an rtl-s
 
 ## Operation
 
-Run redis.
+Run the run.sh shell script to start the Redis server, Celery worker, and Django server.
 
 ```bash
-redis-server
+./run.sh
 ```
 
-Run celery with the following command:
-
-```bash
-celery -A PowerMonitor worker -l info -B --scheduler django_celery_beat.schedulers:DatabaseScheduler
-```
-
-Run the Django server:
-
-```bash
-python manage.py runserver
-```
-
-In the admin panel, add a task to run recordReading every 5 minutes.
+Ctrl-C to stop everything.
