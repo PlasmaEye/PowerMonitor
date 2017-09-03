@@ -7,8 +7,9 @@ import dateutil.parser
 
 @shared_task
 def recordReading():
+    rtltcpAddress = '192.168.1.3:1234'
     program = os.getcwd() + r'/lib/rtlamr'
-    args = [program, '-server', '192.168.1.3:1234', '-format', 'json', '-filterid', '64633980', '-msgtype', 'SCM', '-single']    
+    args = [program, '-server', rtltcpAddress, '-format', 'json', '-filterid', '64633980', '-msgtype', 'SCM', '-single']    
 
     rtlamrExists = os.path.exists(program)    
 
