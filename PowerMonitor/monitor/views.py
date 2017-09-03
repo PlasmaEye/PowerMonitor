@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.http import HttpResponse
 from django.shortcuts import render
-from django.template import loader
-from models import Reading
+from monitor.models import Reading
 from pytz import timezone
-import datetime, pytz, json
+import json#, datetime
 
-TIME_FORMAT = '%Y-%m-%dT%H:%M:%S%z'
+ISO_TIME_FORMAT = '%Y-%m-%dT%H:%M:%S%z'
 
 def index(request):
     # yesterday = datetime.date.today() - datetime.day
@@ -21,7 +19,7 @@ def index(request):
 
     for reading in db_readings:
         local_time = reading.time.astimezone(local_tz)
-        readings.append({'time' : local_time.strftime(TIME_FORMAT), 'consumption' : reading.consumption})    
+        readings.append({'time' : local_time.strftime(ISO_TIME_FORMAT), 'consumption' : reading.consumption})    
 
     context = { 'reading_list' : json.dumps(readings) }
 
