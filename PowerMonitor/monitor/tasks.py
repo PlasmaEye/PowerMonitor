@@ -3,7 +3,7 @@ from models import Meter, Reading
 import subprocess
 import os
 import json
-import datetime
+import dateutil.parser
 
 @shared_task
 def recordReading():
@@ -18,18 +18,16 @@ def recordReading():
 
         reading = json.loads(out)
 
-        time = time.strptime(reading['Time'], 
+        time = dateutil.parser.parse(reading['Time']) 
         message = reading['Message']
         id = message['ID']
         consumption = message['Consumption']
         type = message['Type']
 
-        print reading.keys()
-        print 'time: ' + time
-        print 'consumption: ' + str(consumption)
+        meter, created = Meter.objects.get_or_create(id=id, defaults={'type': type})
+        
+        reading = Reading.objects.get_or_create(consumption=consumption, meter=meter, defaults={'time': time})
 
-        Meter.objects
-
-        return out, err
+        return json.dumps({ 'output' : out, 'error' : err })
     else:
-        return program + ' doesn\'t exist'
+        return program + " doesn't exist"
