@@ -19,7 +19,7 @@ def index(request):
     return render(request, 'index.html', context)
 
 def readings(request, meter_id):
-    db_readings = Reading.objects.get_list_or_404(Reading, meter__id=meter_id).order_by('time').in_bulk()[:1000]
+    db_readings = get_list_or_404(Reading, meter__id=meter_id)[:1000]
 
     readings_dict = convert_readings_to_dict(db_readings)
 
@@ -29,13 +29,14 @@ def convert_readings_to_json(db_readings):
     return json.dumps(convert_readings_to_dict(db_readings))
 
 def convert_readings_to_dict(db_readings):
-    readings_dict = []
+    readings_list = []
+    readings_dict = {'readings' : readings_list}
 
     local_tz = timezone('US/Central')
 
     for reading in db_readings:
         local_time = reading.time.astimezone(local_tz)
-        readings_dict.append({'time' : local_time.strftime(ISO_TIME_FORMAT), 
+        readings_list.append({'time' : local_time.strftime(ISO_TIME_FORMAT), 
                               'consumption' : reading.consumption})
 
     return readings_dict
