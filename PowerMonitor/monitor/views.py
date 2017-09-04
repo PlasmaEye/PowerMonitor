@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.shortcuts import render
+from django.shortcuts import render, get_list_or_404
 from django.http import JsonResponse
-from monitor.models import Reading
+from monitor.models import Reading, Meter
 from pytz import timezone
 import json#, datetime
 
@@ -12,16 +12,14 @@ def index(request):
     # yesterday = datetime.date.today() - datetime.day
     # readings = Reading.objects.filter(time__gte=yesterday)
 
-    db_readings = Reading.objects.order_by('time')[:1440]
+    meter = Meter.objects.first()
 
-    json_Readings = convert_readings_to_json(db_readings)
-
-    context = {'reading_list' : json.dumps(json_Readings)}
+    context = {'meter_id' : meter.id}
 
     return render(request, 'index.html', context)
 
 def readings(request, meter_id):
-    db_readings = Reading.objects.filter(meter__id=meter_id).in_bulk()
+    db_readings = Reading.objects.get_list_or_404(Reading, meter__id=meter_id).order_by('time').in_bulk()[:1000]
 
     readings_dict = convert_readings_to_dict(db_readings)
 
@@ -37,6 +35,7 @@ def convert_readings_to_dict(db_readings):
 
     for reading in db_readings:
         local_time = reading.time.astimezone(local_tz)
-        readings_dict.append({'time' : local_time.strftime(ISO_TIME_FORMAT), 'consumption' : reading.consumption})
+        readings_dict.append({'time' : local_time.strftime(ISO_TIME_FORMAT), 
+                              'consumption' : reading.consumption})
 
     return readings_dict
