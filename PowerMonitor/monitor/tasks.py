@@ -16,31 +16,24 @@ def recordReading():
     if rtlamr_exists:
         process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = process.communicate()
+        
+        reading = json.loads(out)
 
-#TODO: what is in out and err? is err truly errors?
-        print(out)
-        print(err)
+        time = dateutil.parser.parse(reading['Time'])
+        message = reading['Message']
+        message_id = message['ID']
+        meter_consumption = message['Consumption']
+        meter_type = message['Type']
 
-        if err is None:
-            reading = json.loads(out)
+        meter, meter_created = Meter.objects.get_or_create(id=message_id, defaults={'type': meter_type})
 
-            time = dateutil.parser.parse(reading['Time'])
-            message = reading['Message']
-            message_id = message['ID']
-            meter_consumption = message['Consumption']
-            meter_type = message['Type']
+        reading, reading_created = Reading.objects.get_or_create(consumption=meter_consumption, meter=meter, defaults={'time': time})
 
-            meter, meter_created = Meter.objects.get_or_create(id=message_id, defaults={'type': meter_type})
-
-            reading, reading_created = Reading.objects.get_or_create(consumption=meter_consumption, meter=meter, defaults={'time': time})
-
-            if meter_created and reading_created:
-                return 'Meter and Reading created'
-            elif reading_created:
-                return 'Reading created'
-            else:
-                return 'Meter and Reading already exist, nothing done'
-        else:            
-            return err
+        if meter_created and reading_created:
+            return 'Meter and Reading created'
+        elif reading_created:
+            return 'Reading created, consumption: ' + str(meter_consumption)
+        else:
+            return 'Meter and Reading already exist, nothing done'
     else:
         return program + " doesn't exist"
