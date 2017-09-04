@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import json#, datetime
 from django.shortcuts import render, get_list_or_404
 from django.http import JsonResponse
 from monitor.models import Reading, Meter
 from pytz import timezone
-import json#, datetime
 
 ISO_TIME_FORMAT = '%Y-%m-%dT%H:%M:%S%z'
 

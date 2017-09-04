@@ -9,8 +9,6 @@
         type: 'GET',
         url: readingsUrl,
         success: function(data, textStatus, jqXHR) {
-            console.log('successfully retrieved readings');
-            console.log(data);
             loadData(data);
         },
         error: function(data) {
