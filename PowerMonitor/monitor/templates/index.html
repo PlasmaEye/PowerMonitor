@@ -1,15 +1,31 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script type="text/javascript">
-   var meterId = {{meter_id}};
+    var readingsUrl = document.location.href + 'readings/{{meter_id}}';
 
-    
+    var data = '';
 
-    function loadData() {
+    $.ajax({
+        type: 'GET',
+        url: readingsUrl,
+        success: function(data, textStatus, jqXHR) {
+            console.log('successfully retrieved readings');
+            console.log(data);
+            loadData(data);
+        },
+        error: function(data) {
+            console.log('error');
+            console.log(data);            
+            alert('Something went wrong');
+        }
+    });
+
+    function loadData(response) {
         google.charts.load('current', {'packages':['corechart']});
         google.charts.setOnLoadCallback(drawChart);
 
         function drawChart() {
-            var readings = JSON.parse('{{ reading_list|safe }}');
+            var readings = response.readings;
 
             var options = {'title':'Power Consumption Over Time',
                         'width':800,
