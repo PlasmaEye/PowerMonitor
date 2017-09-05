@@ -20,7 +20,7 @@ def index(request):
     return render(request, 'index.html', context)
 
 def readings(request, meter_id):
-    db_readings = get_list_or_404(Reading, meter__id=meter_id)[:20]
+    db_readings = get_list_or_404(Reading, meter__id=meter_id)
 
     to_convert = []
     time_anchor = db_readings[0].time
