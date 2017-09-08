@@ -20,19 +20,24 @@ def index(request):
     return render(request, 'index.html', context)
 
 def readings(request, meter_id):
-    db_readings = get_list_or_404(Reading, meter__id=meter_id)
+    db_readings = get_list_or_404(Reading, meter__id=meter_id)[19:]
 
     to_convert = []
     time_anchor = db_readings[0].time
     consumption_anchor = db_readings[0].consumption
 
-    for reading in db_readings:
-        time_span = reading.time - time_anchor
-        if time_span > timedelta(minutes=5):
-            to_convert.append({'time': time_anchor + timedelta(minutes=5), 'consumption': 0})
-            to_convert.append({'time': reading.time - timedelta(minutes=5), 'consumption': 0})
+    iter_readings = iter(db_readings)
+    next(iter_readings)
 
-        to_convert.append({'time': reading.time, 'consumption': reading.consumption - consumption_anchor})            
+    for reading in iter_readings:
+        time_span = reading.time - time_anchor
+        consumption = reading.consumption - consumption_anchor
+
+        seconds_in_hour = 60 * 60        
+        hours_elapsed = time_span.total_seconds() / seconds_in_hour
+        kw_per_hour = consumption / hours_elapsed
+
+        to_convert.append({'time': time_anchor, 'consumption': kw_per_hour})            
         consumption_anchor = reading.consumption
         time_anchor = reading.time
 

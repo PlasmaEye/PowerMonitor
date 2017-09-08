@@ -29,11 +29,15 @@
                         'width':800,
                         'height':600};
 
+            var timeOptions = { hour12: true };
+
             var data = new google.visualization.DataTable();
             data.addColumn('date', 'Time');
-            data.addColumn('number', 'Consumption');
+            data.addColumn('number', 'kW per Hour');
+            data.addColumn({type: 'string', role: 'tooltip'});
             readings.forEach(function(element) {
-                data.addRow([new Date(element.time), element.consumption]);
+                var date = new Date(element.time);
+                data.addRow([date, element.consumption, date.toLocaleTimeString('en-US', timeOptions)]);
             }, this);
 
             var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
