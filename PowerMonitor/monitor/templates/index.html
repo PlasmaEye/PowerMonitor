@@ -1,24 +1,56 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script type='text/javascript'>
-    google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(drawChart);
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script type="text/javascript">
+    var readingsUrl = document.location.href + 'readings/{{meter_id}}';
 
-    function drawChart() {
-        var readings = JSON.parse('{{ reading_list|safe }}');
+    var data = '';
 
-        var options = {'title':'Power Consumption Over Time',
-                     'width':800,
-                     'height':600};
+    $.ajax({
+        type: 'GET',
+        url: readingsUrl,
+        success: function(data, textStatus, jqXHR) {
+            loadData(data);
+        },
+        error: function(data) {
+            console.log('error');
+            console.log(data);            
+            alert('Something went wrong');
+        }
+    });
 
-        var data = new google.visualization.DataTable();
-        data.addColumn('date', 'Time');
-        data.addColumn('number', 'Consumption');
-        readings.forEach(function(element) {
-            data.addRow([new Date(element.time), element.consumption]);
-        }, this);
+    function loadData(response) {
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
 
-        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
+        function drawChart() {
+            var readings = response.readings;
+
+            var options = {
+                'title':'Power Consumption Over Time',
+                'width':800,
+                'height':600
+                };
+
+            var timeOptions = { 
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true
+                };
+
+            var timeFormat = new Intl.DateTimeFormat('en-US', timeOptions);
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('date', 'Time');
+            data.addColumn('number', 'kW per Hour');
+            data.addColumn({type: 'string', role: 'tooltip'});
+            readings.forEach(function(element) {
+                var date = new Date(element.time);
+                data.addRow([date, element.consumption, timeFormat.format(date) + ' ' + element.consumption.toPrecision(2)]);
+            }, this);
+
+            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
     }
 </script>
 <div id="chart_div"></div>

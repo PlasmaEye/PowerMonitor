@@ -7,28 +7,33 @@ import dateutil.parser
 
 @shared_task
 def recordReading():
-    rtltcpAddress = '192.168.1.3:1234'
+    rtltcp_address = '192.168.1.3:1234'
     program = os.getcwd() + r'/lib/rtlamr'
-    args = [program, '-server', rtltcpAddress, '-format', 'json', '-filterid', '64633980', '-msgtype', 'SCM', '-single']    
+    args = [program, '-server', rtltcp_address, '-format', 'json', '-filterid', '64633980', '-msgtype', 'SCM', '-single']
 
-    rtlamrExists = os.path.exists(program)    
+    rtlamr_exists = os.path.exists(program)
 
-    if(rtlamrExists):
+    if rtlamr_exists:
         process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = process.communicate()
-
+        
         reading = json.loads(out)
 
-        time = dateutil.parser.parse(reading['Time']) 
+        time = dateutil.parser.parse(reading['Time'])
         message = reading['Message']
-        id = message['ID']
-        consumption = message['Consumption']
-        type = message['Type']
+        message_id = message['ID']
+        meter_consumption = message['Consumption']
+        meter_type = message['Type']
 
-        meter, created = Meter.objects.get_or_create(id=id, defaults={'type': type})
-        
-        reading = Reading.objects.get_or_create(consumption=consumption, meter=meter, defaults={'time': time})
+        meter, meter_created = Meter.objects.get_or_create(id=message_id, defaults={'type': meter_type})
 
-        return json.dumps({ 'output' : out, 'error' : err })
+        reading, reading_created = Reading.objects.get_or_create(consumption=meter_consumption, meter=meter, defaults={'time': time})
+
+        if meter_created and reading_created:
+            return 'Meter and Reading created'
+        elif reading_created:
+            return 'Reading created, consumption: ' + str(meter_consumption)
+        else:
+            return 'Meter and Reading already exist, nothing done'
     else:
         return program + " doesn't exist"

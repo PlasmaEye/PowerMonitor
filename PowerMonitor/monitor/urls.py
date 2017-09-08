@@ -4,4 +4,5 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
+    url(r'^readings/(?P<meter_id>[0-9]+)$', views.readings, name='readings')
 ]
