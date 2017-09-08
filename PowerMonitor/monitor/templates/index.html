@@ -25,11 +25,19 @@
         function drawChart() {
             var readings = response.readings;
 
-            var options = {'title':'Power Consumption Over Time',
-                        'width':800,
-                        'height':600};
+            var options = {
+                'title':'Power Consumption Over Time',
+                'width':800,
+                'height':600
+                };
 
-            var timeOptions = { hour12: true };
+            var timeOptions = { 
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true
+                };
+
+            var timeFormat = new Intl.DateTimeFormat('en-US', timeOptions);
 
             var data = new google.visualization.DataTable();
             data.addColumn('date', 'Time');
@@ -37,7 +45,7 @@
             data.addColumn({type: 'string', role: 'tooltip'});
             readings.forEach(function(element) {
                 var date = new Date(element.time);
-                data.addRow([date, element.consumption, date.toLocaleTimeString('en-US', timeOptions) + ' ' + element.consumption.toPrecision(2)]);
+                data.addRow([date, element.consumption, timeFormat.format(date) + ' ' + element.consumption.toPrecision(2)]);
             }, this);
 
             var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
