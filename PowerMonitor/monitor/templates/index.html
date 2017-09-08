@@ -37,7 +37,7 @@
             data.addColumn({type: 'string', role: 'tooltip'});
             readings.forEach(function(element) {
                 var date = new Date(element.time);
-                data.addRow([date, element.consumption, date.toLocaleTimeString('en-US', timeOptions)]);
+                data.addRow([date, element.consumption, date.toLocaleTimeString('en-US', timeOptions) + ' ' + element.consumption.toPrecision(2)]);
             }, this);
 
             var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
