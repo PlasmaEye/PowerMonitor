@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.staticfiles',
     'monitor.apps.MonitorConfig',
+    'discovery.apps.DiscoveryConfig',
     'django_celery_results',
     'django_celery_beat'
 ]

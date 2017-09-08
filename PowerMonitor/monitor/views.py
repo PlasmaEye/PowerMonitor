@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import json#, datetime
-from django.shortcuts import render, get_list_or_404
+
+from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.http import JsonResponse
 from monitor.models import Reading, Meter
 from pytz import timezone
-from datetime import timedelta
 
 ISO_TIME_FORMAT = '%Y-%m-%dT%H:%M:%S%z'
 
-def index(request):
+def index(request, meter_id):
     # yesterday = datetime.date.today() - datetime.day
     # readings = Reading.objects.filter(time__gte=yesterday)
 
-    meter = Meter.objects.first()
+    meter = get_object_or_404(Meter, pk=meter_id)
 
     context = {'meter_id' : meter.id}
 
