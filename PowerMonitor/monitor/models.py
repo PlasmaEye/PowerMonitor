@@ -14,11 +14,11 @@ class Meter(models.Model):
 
     def type_description(self):
         "Returns the description of the type."
-        if(self.type in electric_types):
+        if(self.type in self.electric_types):
             return 'Electric'
-        elif(self.type in gas_types):
+        elif(self.type in self.gas_types):
             return 'Gas'
-        elif(self.type in water_types):
+        elif(self.type in self.water_types):
             return 'Water'
         else:
             return 'Unknown'

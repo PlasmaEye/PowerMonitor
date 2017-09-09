@@ -16,10 +16,10 @@ def index(request, meter_id):
 
     context = {'meter_id' : meter.id}
 
-    return render(request, 'index.html', context)
+    return render(request, 'monitor-index.html', context)
 
 def readings(request, meter_id):
-    db_readings = get_list_or_404(Reading, meter__id=meter_id)[19:]
+    db_readings = get_list_or_404(Reading.objects.order_by('time'), meter__id=meter_id)[19:]
 
     to_convert = []
     time_anchor = db_readings[0].time
@@ -32,8 +32,8 @@ def readings(request, meter_id):
         time_span = reading.time - time_anchor
         consumption = reading.consumption - consumption_anchor
 
-        seconds_in_hour = 60 * 60        
-        hours_elapsed = time_span.total_seconds() / seconds_in_hour
+        seconds_in_hour = 60 * 60
+        hours_elapsed = time_span.total_seconds() / seconds_in_hour        
         kw_per_hour = consumption / hours_elapsed
 
         to_convert.append({'time': time_anchor, 'consumption': kw_per_hour})            

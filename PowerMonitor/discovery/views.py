@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from monitor.models import Meter
 
 def index(request):
-    return render(request, 'index.html')
+    return render(request, 'discovery-index.html')
 
 def meters(request):
     db_meters = get_list_or_404(Meter)
