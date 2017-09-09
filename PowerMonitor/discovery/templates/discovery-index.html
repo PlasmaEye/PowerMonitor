@@ -1,0 +1,24 @@
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script type="text/javascript">
+    var metersUrl = document.location.href + 'meters';
+
+    var data = '';
+
+    $.ajax({
+        type: 'GET',
+        url: metersUrl,
+        success: function(data, textStatus, jqXHR) {
+            loadData(data);
+        },
+        error: function(data) {
+            console.log('error');
+            console.log(data);            
+            alert('Something went wrong');
+        }
+    });
+
+    function loadData(data) {
+        console.log(data);
+    }
+</script>
+<div id="meter_div"></div>

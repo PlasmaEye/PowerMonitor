@@ -1,26 +1,25 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import json#, datetime
-from django.shortcuts import render, get_list_or_404
+
+from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.http import JsonResponse
 from monitor.models import Reading, Meter
 from pytz import timezone
-from datetime import timedelta
 
 ISO_TIME_FORMAT = '%Y-%m-%dT%H:%M:%S%z'
 
-def index(request):
+def index(request, meter_id):
     # yesterday = datetime.date.today() - datetime.day
     # readings = Reading.objects.filter(time__gte=yesterday)
 
-    meter = Meter.objects.first()
+    meter = get_object_or_404(Meter, pk=meter_id)
 
     context = {'meter_id' : meter.id}
 
-    return render(request, 'index.html', context)
+    return render(request, 'monitor-index.html', context)
 
 def readings(request, meter_id):
-    db_readings = get_list_or_404(Reading, meter__id=meter_id)[19:]
+    db_readings = get_list_or_404(Reading.objects.order_by('time'), meter__id=meter_id)[19:]
 
     to_convert = []
     time_anchor = db_readings[0].time
@@ -33,8 +32,8 @@ def readings(request, meter_id):
         time_span = reading.time - time_anchor
         consumption = reading.consumption - consumption_anchor
 
-        seconds_in_hour = 60 * 60        
-        hours_elapsed = time_span.total_seconds() / seconds_in_hour
+        seconds_in_hour = 60 * 60
+        hours_elapsed = time_span.total_seconds() / seconds_in_hour        
         kw_per_hour = consumption / hours_elapsed
 
         to_convert.append({'time': time_anchor, 'consumption': kw_per_hour})            
