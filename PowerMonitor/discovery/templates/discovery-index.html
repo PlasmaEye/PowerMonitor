@@ -32,19 +32,21 @@
             .style("fill", "steelblue")
             .on("click", (data) => { document.location.href = document.location.origin + '/monitor/' + data.meter_id; return false; });
 
-        var textY = -30;
-        g.append("text")
-            .attr("dx", textY)
-            .text((data) => { return data.meter_type })
-            .style("fill", "white")
-            .style("weight", "bold");            
+        var textX = -30;
 
         g.append("text")
-            .attr("dx", textY)
-            .attr("dy", 20)
+            .attr("dx", textX)
+            .attr("dy", -10)
             .text(d => { return d.meter_id })
-            .style("fill", "white")
-            .style("weight", "bold");
+            .attr("fill", "white")
+            .attr("font-weight", "bold");
+
+        g.append("text")
+            .attr("dx", textX +3)
+            .attr("dy", 20)
+            .text(d => { return d.meter_type })
+            .attr("fill", "white")
+            .attr("font-weight", "bold");            
     }
 </script>
 <svg style="width:100%; height:100%">
