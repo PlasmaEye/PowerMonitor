@@ -1,4 +1,5 @@
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
 <script type="text/javascript">
     var metersUrl = document.location.href + 'meters';
 
@@ -17,8 +18,36 @@
         }
     });
 
-    function loadData(data) {
-        console.log(data);
+    function loadData(response) {
+        var svg = d3.select("svg");
+
+        var g = svg.selectAll("g")
+            .data(response.meters)
+            .enter()
+            .append("g")
+            .attr("transform", (d, i) => {return "translate(" + (i * 100 + 100) + ", 80)";});
+
+        var circles = g.append("circle")
+            .attr("r", 60)
+            .style("fill", "steelblue")
+            .on("click", (data) => { document.location.href = document.location.origin + '/monitor/' + data.meter_id; return false; });
+
+        var textX = -30;
+
+        g.append("text")
+            .attr("dx", textX)
+            .attr("dy", -10)
+            .text(d => { return d.meter_id })
+            .attr("fill", "white")
+            .attr("font-weight", "bold");
+
+        g.append("text")
+            .attr("dx", textX + 3)
+            .attr("dy", 20)
+            .text(d => { return d.meter_type })
+            .attr("fill", "white")
+            .attr("font-weight", "bold");
     }
 </script>
-<div id="meter_div"></div>
+<svg style="width:100%; height:100%">
+</svg>
