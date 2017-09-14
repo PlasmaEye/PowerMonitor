@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.shortcuts import render, get_list_or_404
 from django.http import JsonResponse
 from monitor.models import Meter
+from tasks import find_meters
 
 def index(request):
     return render(request, 'discovery-index.html')
@@ -11,7 +12,7 @@ def index(request):
 def meters(request):
     db_meters = get_list_or_404(Meter)
 
-    meter_list = []
+    meter_list = [] 
     meters = {'meters': meter_list}
 
     for meter in db_meters:
@@ -21,3 +22,6 @@ def meters(request):
         })
 
     return JsonResponse(meters)
+
+def discover(request):
+    find_meters.delay()
